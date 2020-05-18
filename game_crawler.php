@@ -77,7 +77,7 @@ function add_update_plug_option($ky,$value)
 }
 
 function getTitleFromMessage($msg){
-        substr(str_get_html($msg)->innertext,0,50)
+        substr(str_get_html($msg)->innertext,0,50);
 }
 
 function start() {
