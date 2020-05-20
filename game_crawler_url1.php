@@ -64,9 +64,17 @@ function start() {
 								// 	<td>$time_played</td>
 								// </tr>";
 								// $count++;
-                            $sql = "INSERT INTO `scrape_data` (name,link,rating,score,winrate,kd,time_played,source) 
-                            VALUES ('".$name."','".$link."','".$rating."','".$score."','".$winrate."','".$kd_ratio."','".$time_played."','".$url1."')";
-                            $results = $Db->getTable($sql);
+                        	$date=date('Y-m-d'); 
+							$sql_check="SELECT name,source,created_date FROM `scrape_data` WHERE name='$name' AND source='$url1' AND created_date='$date'";
+							$results=$Db->getTable($sql_check);
+							
+							if($results->num_rows == 0){
+								$sql = "INSERT INTO `scrape_data` (name,link,rating,score,winrate,kd,time_played,source,created_date) 
+                            VALUES ('".$name."','".$link."','".$rating."','".$score."','".$winrate."','".$kd_ratio."','".$time_played."','".$url1."','".$date."')";
+
+                            	$results = $Db->getTable($sql);	
+							}
+                            
 							}
 							// echo'</tbody></table>';
                             //For URL no 1--end
