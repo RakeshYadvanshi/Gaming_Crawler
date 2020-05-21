@@ -58,10 +58,17 @@ function start() {
                                 //         <td>$ldl</td>
                                 //     </tr>";
                                 // $count++;
-                                 $sql = "INSERT INTO `scrape_data` (name,link,rank,value,ldl,source) 
-                            VALUES ('".$name."','".$link."','".$rank."','".$value."','".$ldl."','".$url5."')";
+                                $date=date('Y-m-d'); 
+
+                            $sql_check="SELECT name,source,created_date FROM `scrape_data` WHERE name='$name' AND source='$url5' AND created_date='$date'";
+                            $results=$Db->getTable($sql_check);
+
+                            if($results->num_rows == 0){
+                                 $sql = "INSERT INTO `scrape_data` (name,link,rank,value,ldl,source,created_date) 
+                            VALUES ('".$name."','".$link."','".$rank."','".$value."','".$ldl."','".$url5."','".$date."')";
                             $results = $Db->getTable($sql);
                             }
+                        }
                             // echo'</tbody></table>';
 
             }
