@@ -16,54 +16,36 @@ function start() {
             if($downloadFlag==true)
             {
             
-            $url4='https://tabstats.com/apex/leaderboards'; //Apex Legends: 
+            // $url4='https://tabstats.com/apex/leaderboards'; //Apex Legends: 
+            $url4='https://apex.apitab.com/leaderboards/windows/elo?u=21';
 
                             //For URL no 4--start
-                             $html = file_get_html($url4,false,stream_context_create(array(
-                                'http'=>array(
-                                  'method'=>"GET",
-                                  'header'=>"Accept-language: en\r\n" .
-                                            "User-Agent: Mozilla/5.0 (iPad; U; CPU OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B334b Safari/531.21.102011-10-16 20:23:10\r\n" // i.e. An iPad 
-                                )
-                              )));
-                            
-                            echo '<table>
-                                <thead>
-                                    <tr>
-                                        <th>No#</th>
-                                        <th>Name</th>
-                                        <th>Link</th>
-                                        <th>Level</th>
-                                        <th>Elo</th>
-                                        <th>Score</th>
-                                    </tr>
-                                </thead>
-                                <tbody>';                               
-                            $count=1;
-                            foreach($html->find('div.oneplayer') as $row)
-                            {
-                                echo $children = $row->children(1);
+                            $ch = curl_init();
+                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch, CURLOPT_URL, $url4);
+                            $result = curl_exec($ch);
+                            curl_close($ch);
+
+                            $obj = json_decode($result);
+                            foreach($obj->players as $player){
                                 
-                                echo $link = $row->getAttribute('mgo');         
-                                // $rank = $row->children(0)->text();
-                                // $name = $row->children(1)->children(0)->text();
-                                // $link = $row->children(1)->children(0)->getAttribute('href');
-                                // $wins = $row->children(2)->text();
-                                // $matches = $row->children(3)->text();
+                                $link='/apex/player/'.$player->player->name.'/'.$player->player->pid;
+                                $name=$player->player->name;
+                                $level=$player->stats->level;
+                                $score=$player->stats->elo;
+                                $rank=$player->stats->elorank;
+                                $date=date('Y-m-d'); 
 
-                                echo "<tr>
-                                        <td>$count</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>";
-                                $count++;
+                                $sql_check="SELECT name,source,created_date FROM `scrape_data` WHERE name='$name' AND source='$url4' AND created_date='$date'";
+                                $results=$Db->getTable($sql_check);
+
+                                if($results->num_rows == 0){
+                                 $sql = "INSERT INTO `scrape_data` (name,link,rank,level,score,source,created_date) 
+                                VALUES ('".$name."','".$link."','".$rank."','".$level."','".$score."','".$url4."','".$date."')";
+                                $results = $Db->getTable($sql);
+                                }
                             }
-                            echo'</tbody>
-                            </table>';
-
                             //For URL no 4--end
                            
             }
