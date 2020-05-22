@@ -71,7 +71,7 @@ function start() {
 							$sql_check="SELECT name,source,created_date FROM `scrape_data` WHERE name='$name' AND source='$url2' AND created_date='$date'";
 							$results=$Db->getTable($sql_check);
 
-							if($results->num_rows == 0){
+							if(isset($results->num_rows) && $results->num_rows == 0){
 	                                $sql = "INSERT INTO `scrape_data` (name,link,kd,winrate,kills,wins,matches,score,source,created_date) 
 	                            VALUES ('".$name."','".$link."','".$kd."','".$wr."','".$kills."','".$wins."','".$matches."','".$score."','".$url2."','".$date."')";
 
