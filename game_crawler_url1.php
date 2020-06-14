@@ -44,28 +44,26 @@ function start() {
          					$count=1;
 
 							foreach($html->find('table.card-table-material tbody tr') as $row)
-                            {
+                            {   
                                 if($count!=35){ //skip when add found in HTML
                                     $rank= $row->children(0)->innertext();
                                     $link= $row->children(1)->children(1)->getAttribute('href');
                                     $name= $row->children(1)->children(1)->innertext();
                                     $rating= $row->children(2)->children(0)->children(0)->innertext();
                                     $score= $row->children(2)->children(1)->innertext();
-                                    $games= $row->children(3)->innertext();
-                                        
-                                }
-                               
+                                    $matches= $row->children(3)->innertext();
                               
-                        	$date=date('Y-m-d'); 
-							$sql_check="SELECT name,source,created_date FROM `scrape_data` WHERE name='$name' AND source='$url1' AND created_date='$date'";
-							$results=$Db->getTable($sql_check);
-							
-							if(isset($results->num_rows) && $results->num_rows == 0){
-								$sql = "INSERT INTO `scrape_data` (name,link,rating,score,rank,games,source,created_date) 
-                            VALUES ('".$name."','".$link."','".$rating."','".$score."','".$rank."','".$games."','".$url1."','".$date."')";
+                                	$date=date('Y-m-d'); 
+        							$sql_check="SELECT name,source,created_date FROM `scrape_data` WHERE name='$name' AND source='$url1' AND created_date='$date'";
+        							$results=$Db->getTable($sql_check);
+        							
+        							if(isset($results->num_rows) && $results->num_rows == 0){
+        								$sql = "INSERT INTO `scrape_data` (name,link,rating,score,rank,matches,source,created_date) 
+                                    VALUES ('".$name."','".$link."','".$rating."','".$score."','".$rank."','".$matches."','".$url1."','".$date."')";
 
-                            	$results = $Db->getTable($sql);	
-							}
+                                    	$results = $Db->getTable($sql);	
+        							}
+                                }
                             $count++;
 							}
 							// echo'</tbody></table>';
