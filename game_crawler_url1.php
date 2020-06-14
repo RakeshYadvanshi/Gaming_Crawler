@@ -16,7 +16,7 @@ function start() {
             if($downloadFlag==true)
             {
             
-            $url1='https://masteroverwatch.com/leaderboards/pc/global/category/averagescore'; //  Overwatch : 
+            $url1='https://overwatchtracker.com/leaderboards/pc/global'; //  Overwatch : 
             
             //For URL no 1--start
             $html = file_get_html($url1,false,stream_context_create(array(
@@ -41,41 +41,32 @@ function start() {
              	// 					</tr>
              	// 				</thead>
              	// 				<tbody>';             					
-         					// $count=1;
-							foreach($html->find('div.data-table.widget-table .table-body .table-row') as $row)
-							{
-								$link = $row->children(0)->getAttribute('href');
-								$name = $row->children(1)->children(1)->children(1)->children(0)->innertext();
-                                $name=trim($name);
-								$rating = $row->children(1)->children(1)->children(1)->children(1)->children(0)->innertext();
-								$score = $row->children(1)->children(2)->children(0)->text();
-								$winrate = $row->children(1)->children(3)->children(0)->children(1)->text();
-								$kd_ratio = $row->children(1)->children(4)->children(0)->children(0)->text();
-								$time_played_hour = $row->children(1)->children(5)->children(0)->text();
-								$time_played_mins = $row->children(1)->children(5)->children(1)->text();
-								$time_played=$time_played_hour.'-'.$time_played_mins;
-								// echo "<tr>
-								// 	<td>$count</td>
-								// 	<td>$name</td>
-								// 	<td>$link</td>
-								// 	<td>$rating</td>
-								// 	<td>$score</td>
-								// 	<td>$winrate</td>
-								// 	<td>$kd_ratio</td>
-								// 	<td>$time_played</td>
-								// </tr>";
-								// $count++;
+         					$count=1;
+
+							foreach($html->find('table.card-table-material tbody tr') as $row)
+                            {
+                                if($count!=35){ //skip when add found in HTML
+                                    $rank= $row->children(0)->innertext();
+                                    $link= $row->children(1)->children(1)->getAttribute('href');
+                                    $name= $row->children(1)->children(1)->innertext();
+                                    $rating= $row->children(2)->children(0)->children(0)->innertext();
+                                    $score= $row->children(2)->children(1)->innertext();
+                                    $games= $row->children(3)->innertext();
+                                        
+                                }
+                               
+                              
                         	$date=date('Y-m-d'); 
 							$sql_check="SELECT name,source,created_date FROM `scrape_data` WHERE name='$name' AND source='$url1' AND created_date='$date'";
 							$results=$Db->getTable($sql_check);
 							
 							if(isset($results->num_rows) && $results->num_rows == 0){
-								$sql = "INSERT INTO `scrape_data` (name,link,rating,score,winrate,kd,time_played,source,created_date) 
-                            VALUES ('".$name."','".$link."','".$rating."','".$score."','".$winrate."','".$kd_ratio."','".$time_played."','".$url1."','".$date."')";
+								$sql = "INSERT INTO `scrape_data` (name,link,rating,score,rank,games,source,created_date) 
+                            VALUES ('".$name."','".$link."','".$rating."','".$score."','".$rank."','".$games."','".$url1."','".$date."')";
 
                             	$results = $Db->getTable($sql);	
 							}
-                            
+                            $count++;
 							}
 							// echo'</tbody></table>';
                             //For URL no 1--end
