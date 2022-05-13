@@ -16,9 +16,9 @@ class DbInterface
     {
 
         $servername = "localhost";
-        $username = "JU_User";
-        $password = "Universe12";
-        $database = "amrit";
+        $username = "root";
+        $password = "";
+        $database = "game_crawler";
 
         $this->conn = new mysqli($servername, $username, $password, $database);
 
